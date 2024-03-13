@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import AdminStatistics from "./AdminStatistics";
 import UserManagement from "./UserManagement";
 import ProductManagement from "./ProductManagement";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
+import UserNavigation from "./UserNavigation";
 const user = {
   name: "Tom Cook",
   email: "tom@example.com",
@@ -19,17 +21,24 @@ const navigation = [
   { name: "Calendar", href: "#", current: false },
   { name: "Reports", href: "#", current: false },
 ];
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export const AdminDashboard = () => {
+  const { handleLogout } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    navigate("/home");
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("firstName");
+    localStorage.removeItem("role");
+    window.location.reload();
+  };
+
   return (
     <div className="container mx-auto  w-full mb-10 ">
       <div className="min-h-full">
@@ -100,21 +109,7 @@ export const AdminDashboard = () => {
                           leaveTo="transform opacity-0 scale-95"
                         >
                           <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            {userNavigation.map((item) => (
-                              <Menu.Item key={item.name}>
-                                {({ active }) => (
-                                  <a
-                                    href={item.href}
-                                    className={classNames(
-                                      active ? "bg-gray-100" : "",
-                                      "block px-4 py-2 text-sm text-gray-700"
-                                    )}
-                                  >
-                                    {item.name}
-                                  </a>
-                                )}
-                              </Menu.Item>
-                            ))}
+                            <UserNavigation handleLogout={handleSignOut} />
                           </Menu.Items>
                         </Transition>
                       </Menu>
@@ -187,16 +182,7 @@ export const AdminDashboard = () => {
                     </button>
                   </div>
                   <div className="mt-3 space-y-1 px-2">
-                    {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    ))}
+                    <UserNavigation handleLogout={handleSignOut} />
                   </div>
                 </div>
               </Disclosure.Panel>

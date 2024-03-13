@@ -60,6 +60,7 @@ export const Login = ({ showLogin, setShowLogin, onSuccess }) => {
 
   const handleLoginSubmit = async (e) => {
     setIsVisible(true);
+    let role;
     e.preventDefault();
     try {
       const response = await axios.post(
@@ -67,18 +68,19 @@ export const Login = ({ showLogin, setShowLogin, onSuccess }) => {
         formData
       );
 
-      if (
-        formData.email === "admin@admin.com" &&
-        formData.password === "admin123"
-      ) {
+      if (response.data.firstName === "Admin") {
+        role = "admin";
+        localStorage.setItem("role", role);
         navigate("/admin");
       } else {
         setSuccessMessage("Login successful. Redirecting to home...");
+
         dispatch({
           type: "LOGIN_SUCCESS",
           payload: {
             token: response.data.token,
             firstName: response.data.firstName,
+            role: role,
           },
         });
 
@@ -142,10 +144,6 @@ export const Login = ({ showLogin, setShowLogin, onSuccess }) => {
     }
   };
 
-  // Agregar este método para manejar el cambio de datos en el formulario de registro
-  const handleSignUpChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
   return (
     <Fragment>
       <Transition
@@ -183,7 +181,7 @@ export const Login = ({ showLogin, setShowLogin, onSuccess }) => {
                 </button>
                 <section>
                   <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                    Welcome to Squid 🦑
+                    Magic-Market 🛍️
                   </h1>
                   <p className="text-sm text-gray-700 mb-4">
                     Please enter your email and password to login.
@@ -220,11 +218,11 @@ export const Login = ({ showLogin, setShowLogin, onSuccess }) => {
                   {errorMessage && isVisible && (
                     <>
                       <div
-                        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+                        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
                         role="alert"
                       >
-                        <strong class="font-bold">Oops! </strong>
-                        <span class="block sm:inline">{errorMessage}</span>
+                        <strong className="font-bold">Oops! </strong>
+                        <span className="block sm:inline">{errorMessage}</span>
                         <button
                           onClick={handleClose}
                           className="absolute top-0 bottom-0 right-0 px-4 py-3"
@@ -244,13 +242,13 @@ export const Login = ({ showLogin, setShowLogin, onSuccess }) => {
                   {successMessage && (
                     <>
                       <div
-                        class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md mt-4"
+                        className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md mt-4"
                         role="alert"
                       >
-                        <div class="flex">
-                          <div class="py-1">
+                        <div className="flex">
+                          <div className="py-1">
                             <svg
-                              class="fill-current h-6 w-6 text-teal-500 mr-4"
+                              className="fill-current h-6 w-6 text-teal-500 mr-4"
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                             >
@@ -258,8 +256,8 @@ export const Login = ({ showLogin, setShowLogin, onSuccess }) => {
                             </svg>
                           </div>
                           <div>
-                            <p class="font-bold">Perfect!! </p>
-                            <p class="text-sm">{successMessage}</p>
+                            <p className="font-bold">Perfect!! </p>
+                            <p className="text-sm">{successMessage}</p>
                           </div>
                         </div>
                       </div>
